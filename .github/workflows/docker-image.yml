@@ -25,7 +25,7 @@ jobs:
         run: |
           echo "Fetching secret from HCP Vault API..."
           SECRET_RESPONSE=$(curl -s -H "Authorization: Bearer ${{ steps.vault.outputs.token }}" \
-            https://api.cloud.hashicorp.com/v1/secrets/application/my-application/secret/my-secret)
+            https://api.cloud.hashicorp.com/secrets/2023-11-28/organizations/0cb79a4f-ca45-4224-9e12-d15aedcaca42/projects/62e16799-1b5a-4ed4-8e09-be5c023dea1a/apps/VaultTestApp/secrets:open)
           
           echo "Raw Secret Response: $SECRET_RESPONSE"
           
