@@ -12,6 +12,26 @@ jobs:
     steps:
       # - uses: actions/checkout@v4
 
+      - name: Login to HashiCorp Vault
+        uses: hashicorp/vault-action@v2
+        with:
+          url: https://auth.idp.hashicorp.com/oauth2/token
+          method: approle
+          roleId: ${{ secrets.HCP_CLIENT_ID }}
+          secretId: ${{ secrets.HCP_CLIENT_SECRET }}
+      
+      - name: Fetch secret from Vault
+        id: fetch-secret
+        uses: hashicorp/vault-action@v2
+        with:
+          url: https://auth.idp.hashicorp.com/oauth2/token
+          # path: secret/data/my-secret-path
+      - name: Print Secret Value
+        run: |
+          echo "Extracting secret value..."
+          echo "${{ steps.fetch-secret.outputs.data }}" | jq -r '.secrets[0].static_version.value'
+
+
       - name: Fetching secret from HashiCorp Vault
         env:
           HCP_CLIENT_ID: ${{ secrets.HCP_CLIENT_ID }}
@@ -25,7 +45,7 @@ jobs:
             --data-urlencode "grant_type=client_credentials" \
             --data-urlencode "audience=https://api.hashicorp.cloud" | jq -r .access_token)
 
-          echo "VAULT_TOKEN: $VAULT_TOKEN"
+          # echo "VAULT_TOKEN: $VAULT_TOKEN"
           # echo "VAULT_TOKEN=$VAULT_TOKEN" >> $GITHUB_ENV        
 
           echo "Fetching secret from HashiCorp Vault..."
@@ -34,9 +54,9 @@ jobs:
             --request GET \
             --header "Authorization: Bearer $VAULT_TOKEN" | jq -r '.secrets[0].static_version.value')
 
+          echo "  "
           echo "Secret Value: $SECRET_VALUE"
           
-  
       - uses: actions/setup-node@v4
         with:
           node-version: '14'
