@@ -17,8 +17,8 @@ jobs:
         with:
           url: https://auth.idp.hashicorp.com/oauth2/token
           method: approle
-          client_id: ${{ secrets.HCP_CLIENT_ID }}
-          client_secret: ${{ secrets.HCP_CLIENT_SECRET }}
+          roleId: ${{ secrets.HCP_CLIENT_ID }}
+          secretId: ${{ secrets.HCP_CLIENT_SECRET }}
       
       - name: Fetch secret from HCP Vault
         id: fetch-secret
