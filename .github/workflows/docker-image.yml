@@ -11,8 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # - uses: actions/checkout@v4
-      - name: Authenticate with Vault
-        id: vault_auth
+      - name: Fetching secret from HashiCorp Vault
         env:
           HCP_CLIENT_ID: ${{ secrets.HCP_CLIENT_ID }}
           HCP_CLIENT_SECRET: ${{ secrets.HCP_CLIENT_SECRET }}
@@ -26,15 +25,13 @@ jobs:
             --data-urlencode "audience=https://api.hashicorp.cloud" | jq -r .access_token)
 
           # echo "VAULT_TOKEN: $VAULT_TOKEN"
-          echo "VAULT_TOKEN=$VAULT_TOKEN" >> $GITHUB_ENV
+          # echo "VAULT_TOKEN=$VAULT_TOKEN" >> $GITHUB_ENV
 
-      - name: Fetching secret from HashiCorp Vault
-        run: |
           echo "Fetching secret from HashiCorp Vault..."
           SECRET_VALUE=$(curl \
             --location "https://api.cloud.hashicorp.com/secrets/2023-11-28/organizations/0cb79a4f-ca45-4224-9e12-d15aedcaca42/projects/62e16799-1b5a-4ed4-8e09-be5c023dea1a/apps/VaultTestApp/secrets:open" \
             --request GET \
-            --header "Authorization: Bearer ${{ steps.vault_auth.outputs.VAULT_TOKEN }}" | jq) # -r '.secrets[0].static_version.value')
+            --header "Authorization: Bearer ${{ steps.vault_auth.outputs.VAULT_TOKEN }}" | jq -r '.secrets[0].static_version.value')
 
           echo "  "
           echo "Secret Value: $SECRET_VALUE"
