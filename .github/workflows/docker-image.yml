@@ -16,7 +16,7 @@ jobs:
         uses: hashicorp/vault-action@v2
         with:
           url: https://api.cloud.hashicorp.com          # HCP 的 API URL
-          method: client_credentials                    # 使用 client_credentials 方法
+          method: approle
           client_id: ${{ secrets.HCP_CLIENT_ID }}
           client_secret: ${{ secrets.HCP_CLIENT_SECRET }}
       
