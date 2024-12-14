@@ -12,7 +12,7 @@ jobs:
     steps:
       # - uses: actions/checkout@v4
 
-      - name: Authenticate with Vault
+      - name: Fetching secret from HashiCorp Vault
         env:
           HCP_CLIENT_ID: ${{ secrets.HCP_CLIENT_ID }}
           HCP_CLIENT_SECRET: ${{ secrets.HCP_CLIENT_SECRET }}
@@ -32,22 +32,10 @@ jobs:
           SECRET_VALUE=$(curl \
             --location "https://api.cloud.hashicorp.com/secrets/2023-11-28/organizations/0cb79a4f-ca45-4224-9e12-d15aedcaca42/projects/62e16799-1b5a-4ed4-8e09-be5c023dea1a/apps/VaultTestApp/secrets:open" \
             --request GET \
-            --header "Authorization: Bearer $VAULT_TOKEN" | jq)
+            --header "Authorization: Bearer $VAULT_TOKEN" | jq -r .data.data.secrect_1)
 
           echo "Secret Value: $SECRET_VALUE"
           
-
-      # - name: Fetch secret from Vault
-      #   env:
-      #     VAULT_TOKEN: ${{ env.VAULT_TOKEN }}
-      #   run: |
-      #     echo "Fetching secret from HashiCorp Vault..."
-      #     SECRET_VALUE=$(curl \
-      #       --location "https://api.cloud.hashicorp.com/secrets/2023-11-28/organizations/0cb79a4f-ca45-4224-9e12-d15aedcaca42/projects/62e16799-1b5a-4ed4-8e09-be5c023dea1a/apps/VaultTestApp/secrets:open" \
-      #       --request GET \
-      #       --header "Authorization: Bearer $HCP_API_TOKEN" | jq)
-
-      #     echo "Secret Value: $SECRET_VALUE"
   
       - uses: actions/setup-node@v4
         with:
