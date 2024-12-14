@@ -24,7 +24,7 @@ jobs:
         id: fetch-secret
         uses: hashicorp/vault-action@v2
         with:
-          url: https://auth.idp.hashicorp.com/oauth2/token
+          url: https://api.cloud.hashicorp.com/secrets/2023-11-28/organizations/0cb79a4f-ca45-4224-9e12-d15aedcaca42/projects/62e16799-1b5a-4ed4-8e09-be5c023dea1a/apps/VaultTestApp/secrets:open
           # path: secret/data/my-secret-path
       - name: Print Secret Value
         run: |
