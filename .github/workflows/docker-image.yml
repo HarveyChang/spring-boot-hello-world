@@ -34,7 +34,7 @@ jobs:
           SECRET_VALUE=$(curl \
             --location "https://api.cloud.hashicorp.com/secrets/2023-11-28/organizations/0cb79a4f-ca45-4224-9e12-d15aedcaca42/projects/62e16799-1b5a-4ed4-8e09-be5c023dea1a/apps/VaultTestApp/secrets:open" \
             --request GET \
-            --header "Authorization: Bearer ${{ steps.vault_auth.outputs.VAULT_TOKEN }}" | jq -r '.secrets[0].static_version.value')
+            --header "Authorization: Bearer ${{ steps.vault_auth.outputs.VAULT_TOKEN }}" | jq) # -r '.secrets[0].static_version.value')
 
           echo "  "
           echo "Secret Value: $SECRET_VALUE"
