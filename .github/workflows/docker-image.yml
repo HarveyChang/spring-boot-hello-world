@@ -12,25 +12,25 @@ jobs:
     steps:
       # - uses: actions/checkout@v4
 
-      - name: Login to HashiCorp Vault
+      - name: Login to HCP Vault
         uses: hashicorp/vault-action@v2
         with:
-          url: https://auth.idp.hashicorp.com/oauth2/token
-          method: approle
-          roleId: ${{ secrets.HCP_CLIENT_ID }}
-          secretId: ${{ secrets.HCP_CLIENT_SECRET }}
+          url: https://api.cloud.hashicorp.com          # HCP 的 API URL
+          method: client_credentials                    # 使用 client_credentials 方法
+          client_id: ${{ secrets.HCP_CLIENT_ID }}
+          client_secret: ${{ secrets.HCP_CLIENT_SECRET }}
       
-      - name: Fetch secret from Vault
+      - name: Fetch secret from HCP Vault
         id: fetch-secret
-        uses: hashicorp/vault-action@v2
-        with:
-          url: https://api.cloud.hashicorp.com/secrets/2023-11-28/organizations/0cb79a4f-ca45-4224-9e12-d15aedcaca42/projects/62e16799-1b5a-4ed4-8e09-be5c023dea1a/apps/VaultTestApp/secrets:open
-          # path: secret/data/my-secret-path
-      - name: Print Secret Value
         run: |
-          echo "Extracting secret value..."
-          echo "${{ steps.fetch-secret.outputs.data }}" | jq -r '.secrets[0].static_version.value'
-
+          echo "Fetching secret from HCP Vault API..."
+          SECRET_RESPONSE=$(curl -s -H "Authorization: Bearer ${{ steps.vault.outputs.token }}" \
+            https://api.cloud.hashicorp.com/v1/secrets/application/my-application/secret/my-secret)
+          
+          echo "Raw Secret Response: $SECRET_RESPONSE"
+          
+          SECRET_VALUE=$(echo "$SECRET_RESPONSE" | jq -r '.secrets[0].static_version.value')
+          echo "Secret Value: $SECRET_VALUE"
 
       - name: Fetching secret from HashiCorp Vault
         env:
